@@ -1,4 +1,4 @@
-package by.sologub.model;
+package ru.clevertec.knyazev.model;
 
 public class Animal {
     private int id;
