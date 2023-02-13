@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import ru.clevertec.knyazev.christmas.Christmas;
+import ru.clevertec.knyazev.christmas.CristmasManager;
+import ru.clevertec.knyazev.christmas.Sweet;
 import ru.clevertec.knyazev.model.Animal;
 import ru.clevertec.knyazev.model.Car;
 import ru.clevertec.knyazev.model.Flower;
@@ -31,6 +34,7 @@ public class Main {
 		task13();
 		task14();
 		task15();
+		task16();
 	}
 
 	private static void task1() throws IOException {
@@ -135,7 +139,7 @@ public class Main {
 		/// 1
 		List<Person> hospitalPersons = houses.stream().filter(house -> house.getBuildingType().equals("Hospital"))
 				.flatMap(house -> house.getPersonList().stream()).collect(Collectors.toList());
-		//  (18 58,63]
+		// (18 58,63]
 		List<Person> youngAndWizdomPersons = houses.stream().flatMap(house -> house.getPersonList().stream())
 				.filter(person -> (person.getDateOfBirth().compareTo(LocalDate.now().minusYears(18)) > 0)
 						|| ((person.getDateOfBirth().compareTo(LocalDate.now().minusYears(58)) <= 0)
@@ -224,20 +228,37 @@ public class Main {
 
 	private static void task15() throws IOException {
 		List<Flower> flowers = Util.getFlowers();
-		
+
 		final int dayInFiveYears = 5 * 365;
 		final double waterPricePerСub = 1.39d;
-		
+
 		double flowersCost = flowers.stream()
 				.sorted(Comparator.comparing(Flower::getOrigin).reversed().thenComparing(Flower::getPrice)
 						.thenComparing(Flower::getWaterConsumptionPerDay).reversed())
 				.filter(flower -> flower.getCommonName().matches("^[CDEFGHIJKLMNOPQRS].{0,}"))
 				.filter(flower -> flower.isShadePreferred()
 						&& flower.getFlowerVaseMaterial().containsAll(List.of("Glass", "Aluminum", "Steel")))
-				.mapToDouble(flower -> flower.getPrice() + flower.getWaterConsumptionPerDay() * dayInFiveYears * waterPricePerСub)
+				.mapToDouble(flower -> flower.getPrice()
+						+ flower.getWaterConsumptionPerDay() * dayInFiveYears * waterPricePerСub)
 				.reduce(0.0d, (prevCost, currentCost) -> prevCost + currentCost);
-		
-		System.out.println("15. Budget cost on keeping filtered flowers is " + String.format("%10.2f", flowersCost) + " $");
+
+		System.out.println(
+				"15. Budget cost on keeping filtered flowers is " + String.format("%10.2f", flowersCost) + " $");
+	}
+
+	private static void task16() {
+		Christmas christmas = new Christmas();
+		CristmasManager cristmasManager = christmas.init();
+
+		double filteredSweetsValue = cristmasManager.createCristmasBox().getPresentBoxes().stream()
+				.flatMap(box -> box.getSweets().stream())
+				.filter(sweet -> (sweet.getCount() > 6) && (sweet.getColor().equals(Sweet.Color.Желтый)
+						|| sweet.getColor().equals(Sweet.Color.Синий) || sweet.getColor().equals(Sweet.Color.Зеленый)))
+				.sorted(Comparator.comparing(Sweet::getName).reversed())
+				.filter(sweet -> sweet.getName().matches("[ВГДЕЖЗИКЛМНОПРСТ].{0,}"))
+				.mapToDouble(sweet -> sweet.getCount() * sweet.getPrice())
+				.reduce(0.0d, (prevValue, currentValue) -> prevValue + currentValue);
+		System.out.println("16. Filtered sweets value is " + String.format("%7.2f", filteredSweetsValue) + " $");
 	}
 
 	private static final double calculateLogisticCost(List<Car> cars) {
