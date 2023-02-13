@@ -1,15 +1,15 @@
-package by.sologub.util;
+package ru.clevertec.knyazev.util;
 
-import by.sologub.model.Animal;
-import by.sologub.model.Car;
-import by.sologub.model.Flower;
-import by.sologub.model.House;
-import by.sologub.model.Person;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import lombok.SneakyThrows;
+import ru.clevertec.knyazev.model.Animal;
+import ru.clevertec.knyazev.model.Car;
+import ru.clevertec.knyazev.model.Flower;
+import ru.clevertec.knyazev.model.House;
+import ru.clevertec.knyazev.model.Person;
 
 import java.io.File;
 import java.io.IOException;
