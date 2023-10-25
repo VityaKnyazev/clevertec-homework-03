@@ -1,12 +1,6 @@
 package by.clevertec;
 
-import by.clevertec.model.Animal;
-import by.clevertec.model.Car;
-import by.clevertec.model.Examination;
-import by.clevertec.model.Flower;
-import by.clevertec.model.House;
-import by.clevertec.model.Person;
-import by.clevertec.model.Student;
+import by.clevertec.model.*;
 import by.clevertec.util.Util;
 
 import java.time.LocalDate;
@@ -218,7 +212,93 @@ public class Main {
 
     public static void task14() {
         List<Car> cars = Util.getCars();
-//        cars.stream() Продолжить ...
+
+        System.out.println("14. Transport company logistic calculation task:");
+
+        // 1
+        List<Car> turkmenistanCars = cars.stream()
+                .filter(car -> car.getCarMake().equals("Jaguar") ||
+                        car.getColor().equals("White"))
+                .toList();
+
+        // 2
+        List<Car> uzbekistanCars = cars.stream()
+                .filter(car -> (car.getMass() < 1500) ||
+                                car.getCarMake().equals("BMW") ||
+                                car.getCarMake().equals("Lexus") ||
+                                car.getCarMake().equals("Chrysler") ||
+                                car.getCarMake().equals("Toyota"))
+                .filter(car -> !turkmenistanCars.contains(car))
+                .toList();
+
+        // 3
+        List<Car> kazahstanCars = cars.stream()
+                .filter(car -> (car.getColor().equals("Black") && (car.getMass() >= 4000))
+                        || car.getCarMake().equals("GMC") || car.getCarMake().equals("Dodge"))
+                .filter(car -> !turkmenistanCars.contains(car) &&
+                               !uzbekistanCars.contains(car))
+                .toList();
+
+        // 4
+        List<Car> kurgustanCars = cars.stream()
+                .filter(car -> (car.getReleaseYear() < 1982) ||
+                                car.getCarModel().equals("Civic") ||
+                                car.getCarModel().equals("Cherokee"))
+                .filter(car -> !turkmenistanCars.contains(car) &&
+                               !uzbekistanCars.contains(car) &&
+                               !kazahstanCars.contains(car))
+                .toList();
+
+        // 5
+        List<Car> russianCars = cars.stream()
+                .filter(car -> (!car.getColor().equals("Yellow") &&
+                                !car.getColor().equals("Red") &&
+                                !car.getColor().equals("Green") &&
+                                !car.getColor().equals("Blue")) || car.getPrice() >= 40000)
+                .filter(car -> !turkmenistanCars.contains(car) &&
+                               !uzbekistanCars.contains(car) &&
+                               !kazahstanCars.contains(car) &&
+                               !kurgustanCars.contains(car))
+                .toList();
+
+        // 6
+        List<Car> mongolianCars = cars.stream()
+                .filter(car -> car.getVin().contains("59"))
+                .filter(car -> !turkmenistanCars.contains(car) &&
+                               !uzbekistanCars.contains(car)   &&
+                               !kazahstanCars.contains(car) &&
+                               !kurgustanCars.contains(car) &&
+                               !russianCars.contains(car))
+                .toList();
+
+        Map<String, Optional<Double>> countryCost = new HashMap<String, List<Car>>() {{
+            put("Turkmenistan", turkmenistanCars);
+            put("Uzbekistan", uzbekistanCars);
+            put("Kazahstan", kazahstanCars);
+            put("Kurgustan", kurgustanCars);
+            put("Russia", russianCars);
+            put("Mongolia", mongolianCars);
+        }}.entrySet()
+          .stream()
+          .collect(Collectors.groupingBy(e -> e.getKey(),
+                                         Collectors.flatMapping(e -> e.getValue().stream(),
+                                                                Collectors.mapping(car -> car.getMass() * 7.14 / 1000,
+                                                                Collectors.reducing((Double p, Double n) -> p + n)))));
+
+        double totalOutcome = Stream
+                .of(turkmenistanCars, uzbekistanCars, kazahstanCars, kurgustanCars, russianCars, mongolianCars)
+                .flatMap(carsList -> carsList.stream())
+                .mapToInt(car -> car.getPrice())
+                .sum() - countryCost.entrySet()
+                                    .stream()
+                                    .flatMap(e -> e.getValue().stream())
+                                    .mapToDouble(dVal -> dVal)
+                                    .sum();
+
+        System.out.println("Total logistic cost per countries: ");
+        countryCost.forEach((country, cost) -> System.out.printf("%s - %10.2f $ %n", country, cost.orElse(null)));
+
+        System.out.printf("Logistic company total outcome: %10.2f $ %n", totalOutcome);
     }
 
     public static void task15() {
