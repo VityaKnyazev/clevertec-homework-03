@@ -41,9 +41,9 @@ public class Main {
 
         System.out.println("1. Director of Zoo № 3 keep 7 animals: ");
 
-        //Age [10, 20]
+        //Age [10, 20)
         animals.stream()
-                .filter(animal -> (animal.getAge() >= 10) && (animal.getAge() <= 20))
+                .filter(animal -> (animal.getAge() >= 10) && (animal.getAge() < 20))
                 .sorted(Comparator.comparingInt(Animal::getAge))
                 .skip(7*2)
                 .limit(7)

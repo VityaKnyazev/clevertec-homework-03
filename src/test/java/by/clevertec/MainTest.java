@@ -1,5 +1,6 @@
 package by.clevertec;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -11,6 +12,29 @@ public class MainTest {
     @BeforeEach
     public void setUp() {
         mainMockStatic = Mockito.mockStatic(Main.class);
+    }
+
+    @AfterEach
+    public void onFinish() {
+
+        if (mainMockStatic != null && !mainMockStatic.isClosed()) {
+            mainMockStatic.close();
+        }
+
+    }
+
+    @Test
+    public void checkTask18ShouldBeCalledOnce() {
+
+        mainMockStatic.when(Main::task18).thenAnswer(invocation -> {
+            System.out.println("Testing call to method task18");
+
+            return invocation.callRealMethod();
+        });
+
+        Main.task18();
+
+        mainMockStatic.verify(Main::task18);
     }
 
     @Test
